@@ -63,10 +63,11 @@ class CustomTrainer(Trainer):
         outputs = model(**inputs)
         logits = outputs.get("logits")
         # compute custom loss (suppose one has 3 labels with different weights)
-        loss_fct = nn.CrossEntropyLoss(weight=torch.tensor(difficulties))
+        loss_fct = nn.CrossEntropyLoss(reduction="none")
         print(logits)
         print(labels)
-        loss = loss_fct(logits.view(-1, self.model.config.num_labels), labels.view(-1))
+        loss = loss_fct(logits, labels)
+        loss = torch.sum(loss * difficulties) / torch.sum(difficulties)
         return (loss, outputs) if return_outputs else loss
 
 
