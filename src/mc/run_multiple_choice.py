@@ -63,11 +63,12 @@ scorer = mlmt.MLMScorer(pretrained_model_name, use_cuda=False)
 
 
 class CustomTrainer(Trainer):
+        
     def compute_loss(self, model, inputs, return_outputs=False):
         labels = inputs.get("labels")
         attn_masks = inputs.get("attention_mask")
         difficulties = torch.sum(attn_masks, (1,2)) / 4
-        print(inputs.keys())
+        #print(inputs.keys())
         # forward pass
         outputs = model(**inputs)
         logits = outputs.get("logits")
@@ -79,11 +80,19 @@ class CustomTrainer(Trainer):
 
 
 class CustomPerpTrainer(Trainer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.tokenizer = tokenizer
+
     def compute_loss(self, model, inputs, return_outputs=False):
         labels = inputs.get("labels")
-        attn_masks = inputs.get("attention_mask")
-        difficulties = torch.sum(attn_masks, (1,2)) / 4
-        print(inputs.keys())
+        input_ids = inputs.get("input_ids")
+        reconstructed_inputs = []
+        for z in input_ids:
+            reconstructed_inputs.append(' '.join(self.tokenizer.convert_tokens_to_string(z)))
+        scores = scorer.score_sentences(reconstructed_inputs)
+        difficulties = np.exp(scores)
+
         # forward pass
         outputs = model(**inputs)
         logits = outputs.get("logits")

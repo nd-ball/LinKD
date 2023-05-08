@@ -19,7 +19,7 @@ export MODEL_PATH=michiyasunaga/$MODEL
 ############################### QA: PubMedQA ###############################
 if [[ $SGE_TASK_ID -eq 1 ]]; then
 task=pubmedqa_hf
-datadir=~/data/seqcls/$task
+datadir=~/data/linkbert/seqcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
@@ -33,7 +33,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
 ############################### QA: BioASQ ###############################
 elif [[ $SGE_TASK_ID -eq 2 ]]; then
 task=bioasq_hf
-datadir=~/data/seqcls/$task
+datadir=~/data/linkbert/seqcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
@@ -49,7 +49,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
 ############################### BIOSSES ###############################
 elif [[ $SGE_TASK_ID -eq 3 ]]; then
 task=BIOSSES_hf
-datadir=~/data/seqcls/$task
+datadir=~/data/linkbert/seqcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
@@ -65,7 +65,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
 ############################### HoC ###############################
 elif [[ $SGE_TASK_ID -eq 4 ]]; then
 task=HoC_hf
-datadir=~/data/seqcls/$task
+datadir=~/data/linkbert/seqcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
@@ -81,7 +81,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
 ############################### RE: ChemProt ###############################
 elif [[ $SGE_TASK_ID -eq 5 ]]; then
 task=chemprot_hf
-datadir=~/data/seqcls/$task
+datadir=~/data/linkbert/seqcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
@@ -95,7 +95,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
 ############################### RE: DDI ###############################
 elif [[ $SGE_TASK_ID -eq 6 ]]; then
 task=DDI_hf
-datadir=~/data/seqcls/$task
+datadir=~/data/linkbert/seqcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
@@ -109,7 +109,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
 ############################### RE: GAD ###############################
 elif [[ $SGE_TASK_ID -eq 7 ]]; then
 task=GAD_hf
-datadir=~/data/seqcls/$task
+datadir=~/data/linkbert/seqcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
@@ -125,7 +125,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
 ############################### EBM PICO ###############################
 elif [[ $SGE_TASK_ID -eq 8 ]]; then
 task=ebmnlp_hf
-datadir=~/data/tokcls/$task
+datadir=~/data/linkbert/tokcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
@@ -141,7 +141,7 @@ python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
 ############################### NER: JNLPBA ###############################
 elif [[ $SGE_TASK_ID -eq 9 ]]; then
 task=JNLPBA_hf
-datadir=~/data/tokcls/$task
+datadir=~/data/linkbert/tokcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
@@ -155,7 +155,7 @@ python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
 ############################### NER: NCBI-disease ###############################
 elif [[ $SGE_TASK_ID -eq 10 ]]; then
 task=NCBI-disease_hf
-datadir=~/data/tokcls/$task
+datadir=~/data/linkbert/tokcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
@@ -169,7 +169,7 @@ python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
 ############################### NER: BC2GM ###############################
 elif [[ $SGE_TASK_ID -eq 11 ]]; then
 task=BC2GM_hf
-datadir=~/data/tokcls/$task
+datadir=~/data/linkbert/tokcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
@@ -183,7 +183,7 @@ python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
 ############################### NER: BC5CDR-disease ###############################
 elif [[ $SGE_TASK_ID -eq 12 ]]; then
 task=BC5CDR-disease_hf
-datadir=~/data/tokcls/$task
+datadir=~/data/linkbert/tokcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
@@ -197,7 +197,7 @@ python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
 ############################### NER: BC5CDR-chem ###############################
 elif [[ $SGE_TASK_ID -eq 13 ]]; then
 task=BC5CDR-chem_hf
-datadir=~/data/tokcls/$task
+datadir=~/data/linkbert/tokcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
