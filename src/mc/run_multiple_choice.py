@@ -60,6 +60,7 @@ pretrained_model_name = 'bert-base-uncased'
 pretrained_model_name = 'michiyasunaga/BioLinkBERT-base'
 scorer = mlmt.MLMScorer(pretrained_model_name, use_cuda=False)
 
+os.environ["WANDB_DISABLED"] = "true"
 
 
 class CustomTrainer(Trainer):
@@ -72,7 +73,7 @@ class CustomTrainer(Trainer):
         # forward pass
         outputs = model(**inputs)
         logits = outputs.get("logits")
-        # compute custom loss (suppose one has 3 labels with different weights)
+        # compute custom loss 
         loss_fct = nn.CrossEntropyLoss(reduction="none")
         loss = loss_fct(logits, labels)
         loss = torch.sum(loss * difficulties) / torch.sum(difficulties)
@@ -80,7 +81,7 @@ class CustomTrainer(Trainer):
 
 
 class CustomPerpTrainer(Trainer):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, tokenizer, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.tokenizer = tokenizer
 
@@ -90,13 +91,13 @@ class CustomPerpTrainer(Trainer):
         reconstructed_inputs = []
         for z in input_ids:
             reconstructed_inputs.append(' '.join(self.tokenizer.convert_tokens_to_string(z)))
-        scores = scorer.score_sentences(reconstructed_inputs)
-        difficulties = np.exp(scores)
+        scores = torch.Tensor(scorer.score_sentences(reconstructed_inputs))
+        difficulties = torch.exp(scores)
 
         # forward pass
         outputs = model(**inputs)
         logits = outputs.get("logits")
-        # compute custom loss (suppose one has 3 labels with different weights)
+        # compute custom loss 
         loss_fct = nn.CrossEntropyLoss(reduction="none")
         loss = loss_fct(logits, labels)
         loss = torch.sum(loss * difficulties) / torch.sum(difficulties)
