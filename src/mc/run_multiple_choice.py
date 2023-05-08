@@ -69,6 +69,7 @@ class CustomTrainer(Trainer):
         labels = inputs.get("labels")
         attn_masks = inputs.get("attention_mask")
         difficulties = torch.sum(attn_masks, (1,2)) / 4
+        difficulties = torch.exp(1 / difficulties)
         #print(inputs.keys())
         # forward pass
         outputs = model(**inputs)

@@ -4,12 +4,16 @@
 #$ -l gpu_card=1
 #$ -pe smp 1
 #$ -N LinkDmedqa       # Specify job name
-#$ -t 1-2              
+
+
+
+# -t 1-2              
 
 module load cuda      # Required modules
 module load cudnn
 source activate linkbert
 
+SGE_TASK_ID=2
 echo $SGE_TASK_ID
 
 
