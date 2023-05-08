@@ -80,7 +80,7 @@ class CustomTrainer(Trainer):
 
 
 class CustomPerpTrainer(Trainer):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, tokenizer, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.tokenizer = tokenizer
 
@@ -89,7 +89,7 @@ class CustomPerpTrainer(Trainer):
         input_ids = inputs.get("input_ids")
         reconstructed_inputs = []
         for z in input_ids:
-            reconstructed_inputs.append(' '.join(self.tokenizer.convert_tokens_to_string(z)))
+            reconstructed_inputs.append(' '.join(self.tokenizer.batch_decode(z[0])))
         scores = scorer.score_sentences(reconstructed_inputs)
         difficulties = np.exp(scores)
 
