@@ -1,4 +1,19 @@
-exit 0;
+#!/bin/bash
+
+#$ -q gpu@@lalor           # Specify queue
+#$ -l gpu_card=4
+#$ -pe smp 1
+#$ -N LinkDblurb       # Specify job name
+
+
+# -t 1-2
+
+module load cuda      # Required modules
+module load cudnn
+source activate linkbert
+
+echo $SGE_TASK_ID
+
 
 export MODEL=BioLinkBERT-base
 export MODEL_PATH=michiyasunaga/$MODEL
@@ -14,7 +29,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
   --per_device_train_batch_size 16 --gradient_accumulation_steps 1 --fp16 \
   --learning_rate 2e-5 --warmup_steps 100 --num_train_epochs 30 --max_seq_length 512 \
   --save_strategy no --evaluation_strategy no --output_dir $outdir --overwrite_output_dir \
-  |& tee $outdir/log.txt &
+  |& tee $outdir/log.txt 
 
 ############################### QA: BioASQ ###############################
 task=bioasq_hf
@@ -27,7 +42,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
   --per_device_train_batch_size 16 --gradient_accumulation_steps 1 --fp16 \
   --learning_rate 2e-5 --warmup_steps 100 --num_train_epochs 20 --max_seq_length 512 \
   --save_strategy no --evaluation_strategy no --output_dir $outdir --overwrite_output_dir \
-  |& tee $outdir/log.txt &
+  |& tee $outdir/log.txt 
 
 
 
@@ -42,7 +57,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
   --per_device_train_batch_size 16 --gradient_accumulation_steps 1 --fp16 \
   --learning_rate 1e-5 --num_train_epochs 30 --max_seq_length 512 --seed 5 \
   --save_strategy no --evaluation_strategy no --output_dir $outdir --overwrite_output_dir \
-  |& tee $outdir/log.txt &
+  |& tee $outdir/log.txt 
 
 
 
@@ -57,7 +72,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
   --per_device_train_batch_size 32 --gradient_accumulation_steps 1 --fp16 \
   --learning_rate 4e-5 --num_train_epochs 40 --max_seq_length 512 \
   --save_strategy no --evaluation_strategy no --output_dir $outdir --overwrite_output_dir \
-  |& tee $outdir/log.txt &
+  |& tee $outdir/log.txt 
 
 
 
@@ -72,7 +87,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
   --per_device_train_batch_size 32 --gradient_accumulation_steps 1 --fp16 \
   --learning_rate 3e-5 --num_train_epochs 10 --max_seq_length 256 \
   --save_strategy no --evaluation_strategy no --output_dir $outdir --overwrite_output_dir \
-  |& tee $outdir/log.txt &
+  |& tee $outdir/log.txt 
 
 ############################### RE: DDI ###############################
 task=DDI_hf
@@ -85,7 +100,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
   --per_device_train_batch_size 32 --gradient_accumulation_steps 1 --fp16 \
   --learning_rate 2e-5 --num_train_epochs 5 --max_seq_length 256 \
   --save_strategy no --evaluation_strategy no --output_dir $outdir --overwrite_output_dir \
-  |& tee $outdir/log.txt &
+  |& tee $outdir/log.txt 
 
 ############################### RE: GAD ###############################
 task=GAD_hf
@@ -98,7 +113,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
   --per_device_train_batch_size 32 --gradient_accumulation_steps 1 --fp16 \
   --learning_rate 3e-5 --num_train_epochs 10 --max_seq_length 256 \
   --save_strategy no --evaluation_strategy no --output_dir $outdir --overwrite_output_dir \
-  |& tee $outdir/log.txt &
+  |& tee $outdir/log.txt 
 
 
 
@@ -113,7 +128,7 @@ python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
   --per_device_train_batch_size 32 --gradient_accumulation_steps 1 --fp16 \
   --learning_rate 5e-5 --num_train_epochs 1 --max_seq_length 512  \
   --save_strategy no --evaluation_strategy no --output_dir $outdir --overwrite_output_dir \
-  |& tee $outdir/log.txt &
+  |& tee $outdir/log.txt 
 
 
 
@@ -128,7 +143,7 @@ python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
    --per_device_train_batch_size 16 --gradient_accumulation_steps 1 --fp16 \
   --learning_rate 1e-5 --warmup_ratio 0.1 --num_train_epochs 5 --max_seq_length 512  \
   --save_strategy no --evaluation_strategy no --output_dir $outdir --overwrite_output_dir \
-  |& tee $outdir/log.txt &
+  |& tee $outdir/log.txt 
 
 ############################### NER: NCBI-disease ###############################
 task=NCBI-disease_hf
@@ -141,7 +156,7 @@ python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
   --per_device_train_batch_size 32 --gradient_accumulation_steps 1 --fp16 \
   --learning_rate 5e-5 --warmup_ratio 0.1 --num_train_epochs 20 --max_seq_length 512 \
   --save_strategy no --evaluation_strategy no --output_dir $outdir --overwrite_output_dir \
-  |& tee $outdir/log.txt &
+  |& tee $outdir/log.txt 
 
 ############################### NER: BC2GM ###############################
 task=BC2GM_hf
@@ -154,7 +169,7 @@ python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
   --per_device_train_batch_size 32 --gradient_accumulation_steps 1 --fp16 \
   --learning_rate 6e-5 --warmup_ratio 0.1 --num_train_epochs 50 --max_seq_length 512 \
   --save_strategy no --evaluation_strategy no --output_dir $outdir --overwrite_output_dir \
-  |& tee $outdir/log.txt &
+  |& tee $outdir/log.txt 
 
 ############################### NER: BC5CDR-disease ###############################
 task=BC5CDR-disease_hf
@@ -167,7 +182,7 @@ python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
   --per_device_train_batch_size 16 --gradient_accumulation_steps 1 --fp16 \
   --learning_rate 5e-5 --warmup_ratio 0.1 --num_train_epochs 8 --max_seq_length 512 \
   --save_strategy no --evaluation_strategy no --output_dir $outdir --overwrite_output_dir \
-  |& tee $outdir/log.txt &
+  |& tee $outdir/log.txt 
 
 ############################### NER: BC5CDR-chem ###############################
 task=BC5CDR-chem_hf
@@ -180,4 +195,4 @@ python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
   --per_device_train_batch_size 32 --gradient_accumulation_steps 1 --fp16 \
   --learning_rate 5e-5 --warmup_ratio 0.1 --num_train_epochs 20 --max_seq_length 512 \
   --save_strategy no --evaluation_strategy no --output_dir $outdir --overwrite_output_dir \
-  |& tee $outdir/log.txt &
+  |& tee $outdir/log.txt 
