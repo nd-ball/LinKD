@@ -78,6 +78,21 @@ class CustomTrainer(Trainer):
         return (loss, outputs) if return_outputs else loss
 
 
+class CustomPerpTrainer(Trainer):
+    def compute_loss(self, model, inputs, return_outputs=False):
+        labels = inputs.get("labels")
+        attn_masks = inputs.get("attention_mask")
+        difficulties = torch.sum(attn_masks, (1,2)) / 4
+        print(inputs.keys())
+        # forward pass
+        outputs = model(**inputs)
+        logits = outputs.get("logits")
+        # compute custom loss (suppose one has 3 labels with different weights)
+        loss_fct = nn.CrossEntropyLoss(reduction="none")
+        loss = loss_fct(logits, labels)
+        loss = torch.sum(loss * difficulties) / torch.sum(difficulties)
+        return (loss, outputs) if return_outputs else loss
+
 @dataclass
 class ModelArguments:
     """
@@ -112,10 +127,11 @@ class ModelArguments:
             "with private models)."
         },
     )
-    baseline: bool = field(
-        default=False,
-        metadata={"help": "Baseline model or self-aware model?."},
+    baseline: str = field(
+        default="baseline",
+        metadata={"help": "Baseline model or self-aware model? Options: baseline, difflength, diffperp."},
     )
+    
 
 
 @dataclass
@@ -446,7 +462,7 @@ def main():
         return {"accuracy": (preds == label_ids).astype(np.float32).mean().item()}
 
     # Initialize our Trainer
-    if model_args.baseline:
+    if model_args.baseline=="baseline":
         print("##### RUN BASELINE #####")
         trainer = Trainer(
             model=model,
@@ -457,7 +473,7 @@ def main():
             data_collator=data_collator,
             compute_metrics=compute_metrics,
         )
-    else:
+    elif model_args.baseline=="difflength":
         print("##### RUN DIFFLENGTHS #####")
         trainer = CustomTrainer(
             model=model,
@@ -467,6 +483,17 @@ def main():
             tokenizer=tokenizer,
             data_collator=data_collator,
             compute_metrics=compute_metrics,
+        )
+    elif model_args.baseline=="diffperp":
+        print("##### RUN DIFFPERP #####")
+        trainer = CustomPerpTrainer(
+            model=model,
+            args=training_args,
+            train_dataset=train_dataset if training_args.do_train else None,
+            eval_dataset=eval_dataset if training_args.do_eval else None,
+            tokenizer=tokenizer,
+            data_collator=data_collator,
+            compute_metrics=compute_metrics
         )
 
 
