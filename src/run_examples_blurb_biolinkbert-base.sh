@@ -20,7 +20,7 @@ export MODEL_PATH=michiyasunaga/$MODEL
 
 ############################### QA: PubMedQA ###############################
 task=pubmedqa_hf
-datadir=../data/seqcls/$task
+datadir=~/data/seqcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
@@ -33,7 +33,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
 
 ############################### QA: BioASQ ###############################
 task=bioasq_hf
-datadir=../data/seqcls/$task
+datadir=~/data/seqcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
@@ -48,7 +48,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
 
 ############################### BIOSSES ###############################
 task=BIOSSES_hf
-datadir=../data/seqcls/$task
+datadir=~/data/seqcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
@@ -63,7 +63,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
 
 ############################### HoC ###############################
 task=HoC_hf
-datadir=../data/seqcls/$task
+datadir=~/data/seqcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
@@ -78,7 +78,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
 
 ############################### RE: ChemProt ###############################
 task=chemprot_hf
-datadir=../data/seqcls/$task
+datadir=~/data/seqcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
@@ -91,7 +91,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
 
 ############################### RE: DDI ###############################
 task=DDI_hf
-datadir=../data/seqcls/$task
+datadir=~/data/seqcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
@@ -104,7 +104,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
 
 ############################### RE: GAD ###############################
 task=GAD_hf
-datadir=../data/seqcls/$task
+datadir=~/data/seqcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
@@ -119,7 +119,7 @@ python3 -u seqcls/run_seqcls.py --model_name_or_path $MODEL_PATH \
 
 ############################### EBM PICO ###############################
 task=ebmnlp_hf
-datadir=../data/tokcls/$task
+datadir=~/data/tokcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
@@ -134,7 +134,7 @@ python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
 
 ############################### NER: JNLPBA ###############################
 task=JNLPBA_hf
-datadir=../data/tokcls/$task
+datadir=~/data/tokcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
@@ -147,7 +147,7 @@ python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
 
 ############################### NER: NCBI-disease ###############################
 task=NCBI-disease_hf
-datadir=../data/tokcls/$task
+datadir=~/data/tokcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
@@ -160,7 +160,7 @@ python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
 
 ############################### NER: BC2GM ###############################
 task=BC2GM_hf
-datadir=../data/tokcls/$task
+datadir=~/data/tokcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
@@ -173,7 +173,7 @@ python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
 
 ############################### NER: BC5CDR-disease ###############################
 task=BC5CDR-disease_hf
-datadir=../data/tokcls/$task
+datadir=~/data/tokcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
@@ -186,7 +186,7 @@ python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \
 
 ############################### NER: BC5CDR-chem ###############################
 task=BC5CDR-chem_hf
-datadir=../data/tokcls/$task
+datadir=~/data/tokcls/$task
 outdir=runs/$task/$MODEL
 mkdir -p $outdir
 python3 -u tokcls/run_ner.py --model_name_or_path $MODEL_PATH \

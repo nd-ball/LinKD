@@ -447,6 +447,7 @@ def main():
 
     # Initialize our Trainer
     if model_args.baseline:
+        print("##### RUN BASELINE #####")
         trainer = Trainer(
             model=model,
             args=training_args,
@@ -457,6 +458,7 @@ def main():
             compute_metrics=compute_metrics,
         )
     else:
+        print("##### RUN DIFFLENGTHS #####")
         trainer = CustomTrainer(
             model=model,
             args=training_args,
