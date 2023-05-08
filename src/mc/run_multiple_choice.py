@@ -58,18 +58,18 @@ import mlmt
 
 pretrained_model_name = 'bert-base-uncased'
 pretrained_model_name = 'michiyasunaga/BioLinkBERT-base'
-scorer = mlmt.MLMScorer(pretrained_model_name, use_cuda=False)
+scorer = mlmt.MLMScorer(pretrained_model_name, use_cuda=True)
 
 os.environ["WANDB_DISABLED"] = "true"
 
-
+torch.cuda.empty_cache()
 class CustomTrainer(Trainer):
         
     def compute_loss(self, model, inputs, return_outputs=False):
         labels = inputs.get("labels")
         attn_masks = inputs.get("attention_mask")
         difficulties = torch.sum(attn_masks, (1,2)) / 4
-        difficulties = torch.exp(1 / difficulties)
+        difficulties = torch.softmax(difficulties, dim=0)
         #print(inputs.keys())
         # forward pass
         outputs = model(**inputs)
