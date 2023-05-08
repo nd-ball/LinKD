@@ -90,7 +90,7 @@ class CustomPerpTrainer(Trainer):
         input_ids = inputs.get("input_ids")
         reconstructed_inputs = []
         for z in input_ids:
-            reconstructed_inputs.append(' '.join(self.tokenizer.convert_tokens_to_string(z)))
+            reconstructed_inputs.append(' '.join(self.tokenizer.batch_decode(z[0])))
         scores = torch.Tensor(scorer.score_sentences(reconstructed_inputs))
         difficulties = torch.exp(scores)
 
