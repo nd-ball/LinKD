@@ -92,9 +92,9 @@ class CustomPerpTrainer(Trainer):
         scores = []
         reconstructed_inputs = []
         for z in input_ids:
-            recon = self.tokenizer.decode(z[0])
+            recon = self.tokenizer.decode(z[0], skip_special_tokens=True, clean_up_tokenization_spaces=True)
             print(recon)
-            score = scorer.score_sentences(recon)
+            score = scorer.score_sentences([recon])
             print(score)
             scores.append(score)
             #reconstructed_inputs.append(self.tokenizer.decode(z[0]))
