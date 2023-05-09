@@ -62,7 +62,7 @@ class CustomTrainer(Trainer):
         labels = inputs.get("labels")
         attn_masks = inputs.get("attention_mask")
         difficulties = torch.sum(attn_masks, 1)
-        difficulties = torch.softmax(difficulties, dim=0)
+        difficulties = torch.softmax(difficulties.float(), dim=0)
         # forward pass
         outputs = model(**inputs)
         logits = outputs.get("logits")
@@ -102,6 +102,10 @@ class ModelArguments:
             "help": "Will use the token generated when running `transformers-cli login` (necessary to use this script "
             "with private models)."
         },
+    )
+    baseline: str = field(
+        default="baseline",
+        metadata={"help": "Baseline model or self-aware model? Options: baseline, difflength, diffperp."},
     )
 
 
@@ -524,15 +528,29 @@ def main():
             }
 
     # Initialize our Trainer
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=train_dataset if training_args.do_train else None,
-        eval_dataset=eval_dataset if training_args.do_eval else None,
-        tokenizer=tokenizer,
-        data_collator=data_collator,
-        compute_metrics=compute_metrics,
-    )
+    if model_args.baseline=="baseline":
+        print("##### RUN BASELINE #####")
+        trainer = Trainer(
+            model=model,
+            args=training_args,
+            train_dataset=train_dataset if training_args.do_train else None,
+            eval_dataset=eval_dataset if training_args.do_eval else None,
+            tokenizer=tokenizer,
+            data_collator=data_collator,
+            compute_metrics=compute_metrics,
+        )
+    elif model_args.baseline=="difflength":
+        print("##### RUN DIFFLENGTHS #####")
+        trainer = CustomTrainer(
+            model=model,
+            args=training_args,
+            train_dataset=train_dataset if training_args.do_train else None,
+            eval_dataset=eval_dataset if training_args.do_eval else None,
+            tokenizer=tokenizer,
+            data_collator=data_collator,
+            compute_metrics=compute_metrics,
+        )
+
 
     # Training
     if training_args.do_train:
