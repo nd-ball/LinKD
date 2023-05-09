@@ -93,10 +93,11 @@ class CustomPerpTrainer(Trainer):
         reconstructed_inputs = []
         for z in input_ids:
             recon = self.tokenizer.decode(z[0])
-            scores.append(scorer.score_sentences(reconstructed_inputs))
+            scores.append(scorer.score_sentences(recon))
             #reconstructed_inputs.append(self.tokenizer.decode(z[0]))
-        scores = torch.tensor(scores, device=labels.device)
+        scores = torch.tensor(scores, device=labels.device).squeeze()
         difficulties = torch.exp(scores)
+        print(difficulties)
 
         # forward pass
         outputs = model(**inputs)
