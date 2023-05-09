@@ -30,7 +30,8 @@ from typing import Optional
 import datasets
 import numpy as np
 from datasets import load_dataset, load_metric
-
+import torch
+import torch.nn as nn
 import transformers
 from transformers import (
     AutoConfig,
@@ -80,7 +81,7 @@ class CustomTrainer(SeqClsTrainer):
         labels = inputs.get("labels")
         attn_masks = inputs.get("attention_mask")
         difficulties = torch.sum(attn_masks, 1)
-        difficulties = torch.softmax(difficulties, dim=0)
+        difficulties = torch.softmax(difficulties.float(), dim=0)
         # forward pass
         outputs = model(**inputs)
         logits = outputs.get("logits")
@@ -357,6 +358,11 @@ def main():
     #
     # In distributed training, the .from_pretrained methods guarantee that only one local process can concurrently
     # download model & vocab.
+    if model_args.tokenizer_name:
+        print(model_args.tokenizer_name)
+    else:
+        print("else")
+        print(model_args.model_name_or_path)
     config = AutoConfig.from_pretrained(
         model_args.config_name if model_args.config_name else model_args.model_name_or_path,
         num_labels=num_labels,
