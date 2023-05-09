@@ -57,6 +57,7 @@ check_min_version("4.9.0")
 
 require_version("datasets>=1.8.0", "To fix: pip install -r examples/pytorch/text-classification/requirements.txt")
 
+
 task_to_keys = {
     "cola": ("sentence", None),
     "mnli": ("premise", "hypothesis"),
@@ -70,6 +71,24 @@ task_to_keys = {
 }
 
 logger = logging.getLogger(__name__)
+os.environ["WANDB_DISABLED"] = "true"
+
+torch.cuda.empty_cache()
+class CustomTrainer(SeqClsTrainer):
+        
+    def compute_loss(self, model, inputs, return_outputs=False):
+        labels = inputs.get("labels")
+        attn_masks = inputs.get("attention_mask")
+        difficulties = torch.sum(attn_masks, 1)
+        difficulties = torch.softmax(difficulties, dim=0)
+        # forward pass
+        outputs = model(**inputs)
+        logits = outputs.get("logits")
+        # compute custom loss 
+        loss_fct = nn.CrossEntropyLoss(reduction="none")
+        loss = loss_fct(logits, labels)
+        loss = torch.sum(loss * difficulties) / torch.sum(difficulties)
+        return (loss, outputs) if return_outputs else loss
 
 
 @dataclass
@@ -197,6 +216,10 @@ class ModelArguments:
             "help": "Will use the token generated when running `transformers-cli login` (necessary to use this script "
             "with private models)."
         },
+    )
+    baseline: str = field(
+        default="baseline",
+        metadata={"help": "Baseline model or self-aware model? Options: baseline, difflength, diffperp."},
     )
 
 
@@ -514,15 +537,43 @@ def main():
         data_collator = None
 
     # Initialize our Trainer
-    trainer = SeqClsTrainer(
-        model=model,
-        args=training_args,
-        train_dataset=train_dataset if training_args.do_train else None,
-        eval_dataset=eval_dataset if training_args.do_eval else None,
-        compute_metrics=compute_metrics,
-        tokenizer=tokenizer,
-        data_collator=data_collator,
-    )
+
+    if model_args.baseline=="baseline":
+        print("##### RUN BASELINE #####")
+        trainer = SeqClsTrainer(
+            model=model,
+            args=training_args,
+            train_dataset=train_dataset if training_args.do_train else None,
+            eval_dataset=eval_dataset if training_args.do_eval else None,
+            compute_metrics=compute_metrics,
+            tokenizer=tokenizer,
+            data_collator=data_collator,
+        )
+    elif model_args.baseline=="difflength":
+        print("##### RUN DIFFLENGTHS #####")
+        trainer = CustomTrainer(
+            model=model,
+            args=training_args,
+            train_dataset=train_dataset if training_args.do_train else None,
+            eval_dataset=eval_dataset if training_args.do_eval else None,
+            compute_metrics=compute_metrics,
+            tokenizer=tokenizer,
+            data_collator=data_collator,
+        )
+    """
+    elif model_args.baseline=="diffperp":
+        print("##### RUN DIFFPERP #####")
+        trainer = CustomPerpTrainer(
+            model=model,
+            args=training_args,
+            train_dataset=train_dataset if training_args.do_train else None,
+            eval_dataset=eval_dataset if training_args.do_eval else None,
+            tokenizer=tokenizer,
+            data_collator=data_collator,
+            compute_metrics=compute_metrics
+        )
+    """
+
 
     # Training
     if training_args.do_train:

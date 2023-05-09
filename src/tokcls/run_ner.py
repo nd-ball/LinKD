@@ -19,6 +19,7 @@ Fine-tuning the library models for token classification.
 # You can also adapt this script on your own token classification task and datasets. Pointers for this are left as
 # comments.
 
+
 import logging
 import os
 import sys
@@ -52,6 +53,24 @@ from transformers.utils.versions import require_version
 require_version("datasets>=1.8.0", "To fix: pip install -r examples/pytorch/token-classification/requirements.txt")
 
 logger = logging.getLogger(__name__)
+os.environ["WANDB_DISABLED"] = "true"
+
+torch.cuda.empty_cache()
+class CustomTrainer(Trainer):
+        
+    def compute_loss(self, model, inputs, return_outputs=False):
+        labels = inputs.get("labels")
+        attn_masks = inputs.get("attention_mask")
+        difficulties = torch.sum(attn_masks, 1)
+        difficulties = torch.softmax(difficulties, dim=0)
+        # forward pass
+        outputs = model(**inputs)
+        logits = outputs.get("logits")
+        # compute custom loss 
+        loss_fct = nn.CrossEntropyLoss(reduction="none")
+        loss = loss_fct(logits, labels)
+        loss = torch.sum(loss * difficulties) / torch.sum(difficulties)
+        return (loss, outputs) if return_outputs else loss
 
 
 @dataclass
