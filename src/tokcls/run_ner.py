@@ -30,6 +30,9 @@ import datasets
 import numpy as np
 from datasets import ClassLabel, load_dataset, load_metric
 
+import torch
+import torch.nn as nn
+
 import transformers
 from transformers import (
     AutoConfig,
