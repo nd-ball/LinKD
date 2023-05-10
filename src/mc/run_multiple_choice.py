@@ -90,21 +90,16 @@ class CustomPerpTrainer(Trainer):
     def compute_loss(self, model, inputs, return_outputs=False):
         labels = inputs.get("labels")
         input_ids = inputs.get("input_ids")
-        print('__CUDNN VERSION:', torch.backends.cudnn.version())
-        print('__Number CUDA Devices:', torch.cuda.device_count())
-        print('__CUDA Device Name:',torch.cuda.get_device_name(0))
-        print('__CUDA Device Total Memory [GB]:',torch.cuda.get_device_properties(0).total_memory/1e9)
-        print('__CUDA Device Total Memory [GB]:',torch.cuda.get_device_properties(1).total_memory/1e9)
 
-        print(model.device)
-        print(scorer.device)
+        #print(model.device)
+        #print(scorer.device)
         scores = []
         reconstructed_inputs = []
         for z in input_ids:
             recon = self.tokenizer.decode(z[0], skip_special_tokens=True, clean_up_tokenization_spaces=True)
-            #reconstructed_inputs.append(recon)
-            score = scorer.score_sentences([recon])
-            scores.extend(score)    
+            reconstructed_inputs.append(recon)
+        scores = scorer.score_sentences(reconstructed_inputs)
+        #scores.extend(score)    
         #print(reconstructed_inputs)
         #print(scores)
         scores = torch.tensor(scores, device=labels.device)
