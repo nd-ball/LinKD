@@ -88,6 +88,9 @@ class CustomPerpTrainer(Trainer):
         self.tokenizer = tokenizer
 
     def compute_loss(self, model, inputs, return_outputs=False):
+        print(model.device)
+        print(inputs.device)
+        print(scorer.device)
         labels = inputs.get("labels")
         input_ids = inputs.get("input_ids")
         scores = []
@@ -379,7 +382,7 @@ def main():
         use_auth_token=True if model_args.use_auth_token else None,
     )
 
-    
+
     model.to("cuda:1")
 
 

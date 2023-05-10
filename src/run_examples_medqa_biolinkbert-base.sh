@@ -60,7 +60,7 @@ python3 -u mc/run_multiple_choice.py --model_name_or_path $MODEL_PATH \
   --do_train --do_eval --do_predict --per_device_train_batch_size 1 --gradient_accumulation_steps 1 \
   --learning_rate 2e-5 --warmup_steps 100 --num_train_epochs 2 --max_seq_length 512 --fp16 \
   --save_strategy no --evaluation_strategy no --output_dir $outdir --overwrite_output_dir \
-  --baseline diffperp \
+  --baseline diffperp --local_rank -1 \
   |& tee $outdir/log.txt 
 
 fi
