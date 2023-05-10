@@ -58,7 +58,8 @@ import mlmt
 
 pretrained_model_name = 'bert-base-uncased'
 pretrained_model_name = 'michiyasunaga/BioLinkBERT-base'
-scorer = mlmt.MLMScorer(pretrained_model_name, use_cuda=False)
+#pretrained_model_name = 'emilyalsentzer/Bio_ClinicalBERT'
+scorer = mlmt.MLMScorer(pretrained_model_name, use_cuda=True)
 
 os.environ["WANDB_DISABLED"] = "true"
 
@@ -96,6 +97,7 @@ class CustomPerpTrainer(Trainer):
             reconstructed_inputs.append(recon)
         scores = scorer.score_sentences(reconstructed_inputs)
         #scores.extend(score)    
+        #print(reconstructed_inputs)
         #print(scores)
         scores = torch.tensor(scores, device=labels.device)
         difficulties = scores
