@@ -58,7 +58,7 @@ import mlmt
 
 pretrained_model_name = 'bert-base-uncased'
 pretrained_model_name = 'michiyasunaga/BioLinkBERT-base'
-scorer = mlmt.MLMScorer(pretrained_model_name, use_cuda=True)
+scorer = mlmt.MLMScorer(pretrained_model_name, use_cuda=False)
 
 os.environ["WANDB_DISABLED"] = "true"
 
@@ -93,15 +93,15 @@ class CustomPerpTrainer(Trainer):
         reconstructed_inputs = []
         for z in input_ids:
             recon = self.tokenizer.decode(z[0], skip_special_tokens=True, clean_up_tokenization_spaces=True)
-            print(recon)
+            #print(recon)
             score = scorer.score_sentences([recon])
-            print(score)
-            scores.append(score)
+            #print(score)
+            scores.extend(score)
             #reconstructed_inputs.append(self.tokenizer.decode(z[0]))
-        print(scores)
-        scores = torch.tensor(scores, device=labels.device).squeeze()
-        difficulties = torch.exp(scores)
-        print(difficulties)
+        #print(scores)
+        scores = torch.tensor(scores, device=labels.device)
+        difficulties = scores
+        #print(difficulties)
 
         # forward pass
         outputs = model(**inputs)
