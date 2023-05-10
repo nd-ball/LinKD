@@ -379,6 +379,9 @@ def main():
         use_auth_token=True if model_args.use_auth_token else None,
     )
 
+    
+    model.to("cuda:1")
+
 
     # When using your own dataset or a different dataset from swag, you will probably need to change this.
     _num_choices = len([elm for elm in raw_datasets['train'].features.keys() if elm.startswith('ending')])
