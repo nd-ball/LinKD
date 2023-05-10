@@ -63,7 +63,6 @@ scorer = mlmt.MLMScorer(pretrained_model_name, use_cuda=True)
 
 os.environ["WANDB_DISABLED"] = "true"
 
-torch.cuda.empty_cache()
 class CustomTrainer(Trainer):
         
     def compute_loss(self, model, inputs, return_outputs=False):
