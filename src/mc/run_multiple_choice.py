@@ -88,18 +88,15 @@ class CustomPerpTrainer(Trainer):
         self.tokenizer = tokenizer
 
     def compute_loss(self, model, inputs, return_outputs=False):
-        print(model.device)
-        print(inputs.device)
-        print(scorer.device)
         labels = inputs.get("labels")
         input_ids = inputs.get("input_ids")
         scores = []
         reconstructed_inputs = []
         for z in input_ids:
             recon = self.tokenizer.decode(z[0], skip_special_tokens=True, clean_up_tokenization_spaces=True)
-            reconstructed_inputs.append(recon)
-        scores = scorer.score_sentences(reconstructed_inputs)
-        #scores.extend(score)    
+            #reconstructed_inputs.append(recon)
+            score = scorer.score_sentences([recon])
+            scores.extend(score)    
         #print(reconstructed_inputs)
         #print(scores)
         scores = torch.tensor(scores, device=labels.device)
