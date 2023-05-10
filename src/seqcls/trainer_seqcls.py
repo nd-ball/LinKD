@@ -19,6 +19,8 @@ A subclass of `Trainer` specific to Question-Answering tasks
 from transformers import Trainer, is_torch_tpu_available
 from transformers.trainer_utils import PredictionOutput
 
+import torch
+
 
 if is_torch_tpu_available():
     import torch_xla.core.xla_model as xm
@@ -87,3 +89,22 @@ class SeqClsTrainer(Trainer):
         self.log(metrics) #Added
 
         return PredictionOutput(predictions=output.predictions, label_ids=output.label_ids, metrics=metrics)
+
+class SeqClsDiffTrainer(SeqClsTrainer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def compute_loss(self, model, inputs, return_outputs=False):
+        labels = inputs.get("labels")
+        attn_masks = inputs.get("attention_mask")
+        difficulties = torch.sum(attn_masks, (1,2)) / 4
+        difficulties = torch.softmax(difficulties, dim=0)
+        #print(inputs.keys())
+        # forward pass
+        outputs = model(**inputs)
+        logits = outputs.get("logits")
+        # compute custom loss 
+        loss_fct = nn.CrossEntropyLoss(reduction="none")
+        loss = loss_fct(logits, labels)
+        loss = torch.sum(loss * difficulties) / torch.sum(difficulties)
+        return (loss, outputs) if return_outputs else loss
