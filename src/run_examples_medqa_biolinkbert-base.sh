@@ -1,7 +1,9 @@
 #!/bin/bash
 
+#$ -M jlalor1@nd.edu   # Email address for job notification
+#$ -m abe            # Send mail when job begins, ends and aborts
 #$ -q gpu@@lalor           # Specify queue
-#$ -l gpu_card=1
+#$ -l gpu_card=2
 #$ -pe smp 1
 #$ -N LinkDmedqa       # Specify job name
 
