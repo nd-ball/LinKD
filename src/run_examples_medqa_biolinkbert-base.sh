@@ -15,7 +15,7 @@ module load cuda      # Required modules
 module load cudnn
 source activate linkbert
 
-SGE_TASK_ID=2
+SGE_TASK_ID=3
 echo $SGE_TASK_ID
 
 
