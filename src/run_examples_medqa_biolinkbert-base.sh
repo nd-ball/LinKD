@@ -6,7 +6,7 @@
 #$ -l gpu_card=2
 #$ -pe smp 1
 #$ -N LinkDmedqa       # Specify job name
-#$ -t 1-2              
+#$ -t 1-3          
 
 module load cuda      # Required modules
 module load cudnn
