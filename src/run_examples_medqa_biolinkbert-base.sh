@@ -6,21 +6,20 @@
 #$ -l gpu_card=2
 #$ -pe smp 1
 #$ -N LinkDmedqa       # Specify job name
-
-
-
-# -t 1-2              
+#$ -t 1-2              
 
 module load cuda      # Required modules
 module load cudnn
 source activate linkbert
 
-SGE_TASK_ID=3
+#SGE_TASK_ID=3
 echo $SGE_TASK_ID
 
 
 export MODEL=BioLinkBERT-base
 export MODEL_PATH=michiyasunaga/$MODEL
+
+export MODEL_PATH=bert-base-uncased
 
 ############################### MedQA ###############################
 
