@@ -6,13 +6,15 @@
 #$ -l gpu_card=2
 #$ -pe smp 1
 #$ -N LinkDmedqa       # Specify job name
-#$ -t 1-3          
+
+
+# -t 1-3          
 
 module load cuda      # Required modules
 module load cudnn
 source activate linkbert
 
-#SGE_TASK_ID=3
+SGE_TASK_ID=1
 echo $SGE_TASK_ID
 
 
@@ -34,7 +36,7 @@ python3 -u mc/run_multiple_choice.py --model_name_or_path $MODEL_PATH \
   --do_train --do_eval --do_predict --per_device_train_batch_size 2 --gradient_accumulation_steps 8 \
   --learning_rate 2e-5 --warmup_steps 100 --num_train_epochs 2 --max_seq_length 512 --fp16 \
   --save_strategy no --evaluation_strategy no --output_dir $outdir --overwrite_output_dir \
-  --baseline baseline True \
+  --baseline baseline \
   |& tee $outdir/log.txt 
 
 elif [[ $SGE_TASK_ID -eq 2 ]]; then
