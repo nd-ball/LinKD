@@ -26,8 +26,8 @@ elif [[ $(($SGE_TASK_ID%4)) -eq 2 ]]; then
 export MODEL=biobert-v1.1
 export MODEL_PATH=dmis-lab/$MODEL
 elif [[ $(($SGE_TASK_ID%4)) -eq 3 ]]; then
-export MODEL=biomed_roberta_base
-export MODEL_PATH=allenai/$MODEL
+export MODEL=BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext
+export MODEL_PATH=microsoft/$MODEL
 fi
 echo $MODEL_PATH
 ############################### MedQA ###############################
