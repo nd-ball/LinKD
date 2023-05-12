@@ -20,7 +20,7 @@ if [[ $(($SGE_TASK_ID%4)) -eq 0 ]]; then
 export MODEL=BioLinkBERT-base
 export MODEL_PATH=michiyasunaga/$MODEL
 elif [[ $(($SGE_TASK_ID%4)) -eq 1 ]]; then
-export MODEL_PATH=bert-base-uncased
+export MODEL=bert-base-uncased
 export MODEL_PATH=$MODEL
 elif [[ $(($SGE_TASK_ID%4)) -eq 2 ]]; then
 export MODEL=biobert-v1.1
