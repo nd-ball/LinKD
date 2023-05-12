@@ -12,7 +12,7 @@ module load cuda      # Required modules
 module load cudnn
 source activate linkbert
 
-SGE_TASK_ID=1
+#SGE_TASK_ID=1
 echo $SGE_TASK_ID
 
 
@@ -29,7 +29,7 @@ elif [[ $(($SGE_TASK_ID%4)) -eq 3 ]]; then
 export MODEL=biomed_roberta_base
 export MODEL_PATH=allenai/$MODEL
 fi
-
+echo $MODEL_PATH
 ############################### MedQA ###############################
 
 if [[ $(($SGE_TASK_ID%3)) -eq 0 ]]; then
