@@ -50,7 +50,7 @@ from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version
 from transformers.utils.versions import require_version
 
-from trainer_seqcls import SeqClsTrainer, SeqClsDiffTrainer
+from trainer_seqcls import SeqClsTrainer, SeqClsDiffTrainer, CustomPerpTrainer
 
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
@@ -541,7 +541,7 @@ def main():
         )
     elif model_args.baseline=="difflength":
         print("##### RUN DIFFLENGTHS #####")
-        trainer = CustomTrainer(
+        trainer = SeqClsDiffTrainer(
             model=model,
             args=training_args,
             train_dataset=train_dataset if training_args.do_train else None,
