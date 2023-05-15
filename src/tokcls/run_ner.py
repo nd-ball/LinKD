@@ -63,12 +63,15 @@ class CustomTrainer(Trainer):
         
     def compute_loss(self, model, inputs, return_outputs=False):
         labels = inputs.get("labels")
+        print(labels.shape)
         attn_masks = inputs.get("attention_mask")
+        print(attn_masks.shape)
         difficulties = torch.sum(attn_masks, 1)
         difficulties = torch.softmax(difficulties.float(), dim=0)
         # forward pass
         outputs = model(**inputs)
         logits = outputs.get("logits")
+        print(logits.shape)
         # compute custom loss 
         loss_fct = nn.CrossEntropyLoss(reduction="none")
         loss = loss_fct(logits, labels)

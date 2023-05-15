@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #$ -q gpu@@lalor           # Specify queue
-#$ -l gpu_card=1
+#$ -l gpu_card=2
 #$ -pe smp 1
 #$ -N LinkDblurbBaseline       # Specify job name
 #$ -t 1-7
