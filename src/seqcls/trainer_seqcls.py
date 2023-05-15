@@ -20,12 +20,14 @@ from transformers import Trainer, is_torch_tpu_available
 from transformers.trainer_utils import PredictionOutput
 
 import torch
+import torch.nn as nn
 
 
 if is_torch_tpu_available():
     import torch_xla.core.xla_model as xm
     import torch_xla.debug.metrics as met
 
+import mlmt
 
 class SeqClsTrainer(Trainer):
     def __init__(self, *args, **kwargs):
@@ -100,6 +102,45 @@ class SeqClsDiffTrainer(SeqClsTrainer):
         difficulties = torch.sum(attn_masks, (1,2)) / 4
         difficulties = torch.softmax(difficulties, dim=0)
         #print(inputs.keys())
+        # forward pass
+        outputs = model(**inputs)
+        logits = outputs.get("logits")
+        # compute custom loss 
+        loss_fct = nn.CrossEntropyLoss(reduction="none")
+        loss = loss_fct(logits, labels)
+        loss = torch.sum(loss * difficulties) / torch.sum(difficulties)
+        return (loss, outputs) if return_outputs else loss
+
+
+
+pretrained_model_name = 'bert-base-uncased'
+pretrained_model_name = 'michiyasunaga/BioLinkBERT-base'
+#pretrained_model_name = 'emilyalsentzer/Bio_ClinicalBERT'
+scorer = mlmt.MLMScorer(pretrained_model_name, use_cuda=True)
+
+
+class CustomPerpTrainer(SeqClsTrainer):
+    def __init__(self, tokenizer, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.tokenizer = tokenizer
+
+    def compute_loss(self, model, inputs, return_outputs=False):
+        labels = inputs.get("labels")
+        input_ids = inputs.get("input_ids")
+        
+        scores = []
+        reconstructed_inputs = []
+        for z in input_ids:
+            recon = self.tokenizer.decode(z[0], skip_special_tokens=True, clean_up_tokenization_spaces=True)
+            #reconstructed_inputs.append(recon)
+            score = scorer.score_sentences([recon])
+            scores.extend(score)    
+        #print(reconstructed_inputs)
+        #print(scores)
+        scores = torch.tensor(scores, device=labels.device)
+        difficulties = 1 + torch.exp(scores/128)
+        #print(difficulties)
+
         # forward pass
         outputs = model(**inputs)
         logits = outputs.get("logits")
