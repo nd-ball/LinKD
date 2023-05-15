@@ -99,7 +99,7 @@ class SeqClsDiffTrainer(SeqClsTrainer):
     def compute_loss(self, model, inputs, return_outputs=False):
         labels = inputs.get("labels")
         attn_masks = inputs.get("attention_mask")
-        difficulties = torch.sum(attn_masks, (1,2)) / 4
+        difficulties = torch.sum(attn_masks, -1)
         difficulties = torch.softmax(difficulties, dim=0)
         #print(inputs.keys())
         # forward pass
