@@ -4,7 +4,7 @@
 #$ -l gpu_card=1
 #$ -pe smp 1
 #$ -N LinkDblurbBaseline       # Specify job name
-#$ -t 1-13
+#$ -t 1-7
 
 module load cuda      # Required modules
 module load cudnn
@@ -16,7 +16,7 @@ echo $SGE_TASK_ID
 export MODEL=BioLinkBERT-base
 export MODEL_PATH=michiyasunaga/$MODEL
 
-baseline=baseline
+baseline=diffperp
 
 ############################### QA: PubMedQA ###############################
 if [[ $SGE_TASK_ID -eq 1 ]]; then

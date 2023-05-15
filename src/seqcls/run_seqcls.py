@@ -72,6 +72,13 @@ task_to_keys = {
 }
 
 logger = logging.getLogger(__name__)
+import mlmt
+
+pretrained_model_name = 'bert-base-uncased'
+pretrained_model_name = 'michiyasunaga/BioLinkBERT-base'
+#pretrained_model_name = 'emilyalsentzer/Bio_ClinicalBERT'
+scorer = mlmt.MLMScorer(pretrained_model_name, use_cuda=True)
+
 os.environ["WANDB_DISABLED"] = "true"
 
 torch.cuda.empty_cache()
@@ -82,6 +89,38 @@ class CustomTrainer(SeqClsTrainer):
         attn_masks = inputs.get("attention_mask")
         difficulties = torch.sum(attn_masks, 1)
         difficulties = torch.softmax(difficulties.float(), dim=0)
+        # forward pass
+        outputs = model(**inputs)
+        logits = outputs.get("logits")
+        # compute custom loss 
+        loss_fct = nn.CrossEntropyLoss(reduction="none")
+        loss = loss_fct(logits, labels)
+        loss = torch.sum(loss * difficulties) / torch.sum(difficulties)
+        return (loss, outputs) if return_outputs else loss
+
+
+class CustomPerpTrainer(Trainer):
+    def __init__(self, tokenizer, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.tokenizer = tokenizer
+
+    def compute_loss(self, model, inputs, return_outputs=False):
+        labels = inputs.get("labels")
+        input_ids = inputs.get("input_ids")
+        
+        scores = []
+        reconstructed_inputs = []
+        for z in input_ids:
+            recon = self.tokenizer.decode(z[0], skip_special_tokens=True, clean_up_tokenization_spaces=True)
+            #reconstructed_inputs.append(recon)
+            score = scorer.score_sentences([recon])
+            scores.extend(score)    
+        #print(reconstructed_inputs)
+        #print(scores)
+        scores = torch.tensor(scores, device=labels.device)
+        difficulties = 1 + torch.exp(scores/128)
+        #print(difficulties)
+
         # forward pass
         outputs = model(**inputs)
         logits = outputs.get("logits")
@@ -566,7 +605,7 @@ def main():
             tokenizer=tokenizer,
             data_collator=data_collator,
         )
-    """
+    
     elif model_args.baseline=="diffperp":
         print("##### RUN DIFFPERP #####")
         trainer = CustomPerpTrainer(
@@ -578,7 +617,7 @@ def main():
             data_collator=data_collator,
             compute_metrics=compute_metrics
         )
-    """
+    
 
 
     # Training
