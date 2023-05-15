@@ -132,12 +132,12 @@ class CustomPerpTrainer(SeqClsTrainer):
         reconstructed_inputs = []
         for z in input_ids:
             recon = self.tokenizer.decode(z, skip_special_tokens=True, clean_up_tokenization_spaces=True)
-            print(recon)
+            #print(recon)
             #reconstructed_inputs.append(recon)
             score = scorer.score_sentences([recon])
             scores.extend(score)    
-        print(reconstructed_inputs)
-        print(scores)
+        #print(reconstructed_inputs)
+        #print(scores)
         scores = torch.tensor(scores, device=labels.device)
         difficulties = 1 + torch.exp(scores/128)
         #print(difficulties)
