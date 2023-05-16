@@ -113,16 +113,17 @@ class SeqClsDiffTrainer(SeqClsTrainer):
 
 
 
-pretrained_model_name = 'bert-base-uncased'
-pretrained_model_name = 'michiyasunaga/BioLinkBERT-base'
-#pretrained_model_name = 'emilyalsentzer/Bio_ClinicalBERT'
-scorer = mlmt.MLMScorer(pretrained_model_name, use_cuda=True)
 
 
 class CustomPerpTrainer(SeqClsTrainer):
-    def __init__(self, tokenizer, *args, **kwargs):
+    def __init__(self, tokenizer, mname, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.tokenizer = tokenizer
+        #pretrained_model_name = 'bert-base-uncased'
+        #pretrained_model_name = 'michiyasunaga/BioLinkBERT-base'
+        #pretrained_model_name = 'emilyalsentzer/Bio_ClinicalBERT'
+        self.scorer = mlmt.MLMScorer(mname, use_cuda=True)
+
 
     def compute_loss(self, model, inputs, return_outputs=False):
         labels = inputs.get("labels")
@@ -134,7 +135,7 @@ class CustomPerpTrainer(SeqClsTrainer):
             recon = self.tokenizer.decode(z, skip_special_tokens=True, clean_up_tokenization_spaces=True)
             #print(recon)
             #reconstructed_inputs.append(recon)
-            score = scorer.score_sentences([recon])
+            score = self.scorer.score_sentences([recon])
             scores.extend(score)    
         #print(reconstructed_inputs)
         #print(scores)
