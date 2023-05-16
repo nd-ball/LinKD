@@ -4,7 +4,7 @@
 #$ -l gpu_card=2
 #$ -pe smp 1
 #$ -N LinkDblurbIEEE       # Specify job name
-#$ -t 1-6
+#$ -t 3-4
 
 module load cuda      # Required modules
 module load cudnn
