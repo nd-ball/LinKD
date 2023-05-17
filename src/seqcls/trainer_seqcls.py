@@ -151,3 +151,46 @@ class CustomPerpTrainer(SeqClsTrainer):
         loss = loss_fct(logits, labels)
         loss = torch.sum(loss * difficulties) / torch.sum(difficulties)
         return (loss, outputs) if return_outputs else loss
+
+
+
+class CustomPerpDiffTrainer(SeqClsTrainer):
+    def __init__(self, tokenizer, mname, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.tokenizer = tokenizer
+        #pretrained_model_name = 'bert-base-uncased'
+        #pretrained_model_name = 'michiyasunaga/BioLinkBERT-base'
+        #pretrained_model_name = 'emilyalsentzer/Bio_ClinicalBERT'
+        self.scorer = mlmt.MLMScorer(mname, use_cuda=True)
+
+
+    def compute_loss(self, model, inputs, return_outputs=False):
+        attn_masks = inputs.get("attention_mask")
+        difficulties = torch.sum(attn_masks, -1).double()
+        difficulties1 = torch.softmax(difficulties, dim=0)
+
+        labels = inputs.get("labels")
+        input_ids = inputs.get("input_ids")
+        print(input_ids.shape)
+        scores = []
+        reconstructed_inputs = []
+        for z in input_ids:
+            recon = self.tokenizer.decode(z, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+            #print(recon)
+            #reconstructed_inputs.append(recon)
+            score = self.scorer.score_sentences([recon])
+            scores.extend(score)    
+        #print(reconstructed_inputs)
+        #print(scores)
+        scores = torch.tensor(scores, device=labels.device)
+        difficulties2 = 1 + torch.exp(scores/128)
+        #print(difficulties)
+
+        # forward pass
+        outputs = model(**inputs)
+        logits = outputs.get("logits")
+        # compute custom loss 
+        loss_fct = nn.CrossEntropyLoss(reduction="none")
+        loss = loss_fct(logits, labels)
+        loss = torch.sum(loss * difficulties1) / torch.sum(difficulties1) + torch.sum(loss * difficulties2) / torch.sum(difficulties2) + torch.mean(loss)
+        return (loss, outputs) if return_outputs else loss

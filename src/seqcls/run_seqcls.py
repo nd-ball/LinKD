@@ -50,7 +50,7 @@ from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version
 from transformers.utils.versions import require_version
 
-from trainer_seqcls import SeqClsTrainer, SeqClsDiffTrainer, CustomPerpTrainer
+from trainer_seqcls import SeqClsTrainer, SeqClsDiffTrainer, CustomPerpTrainer, CustomPerpDiffTrainer
 
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
@@ -554,6 +554,19 @@ def main():
     elif model_args.baseline=="diffperp":
         print("##### RUN DIFFPERP #####")
         trainer = CustomPerpTrainer(
+            model=model,
+            args=training_args,
+            train_dataset=train_dataset if training_args.do_train else None,
+            eval_dataset=eval_dataset if training_args.do_eval else None,
+            tokenizer=tokenizer,
+            data_collator=data_collator,
+            compute_metrics=compute_metrics,
+            mname=model_args.model_name_or_path
+        )
+
+    elif model_args.baseline=="fullloss":
+        print("##### RUN loss + difflen + diffperp #####")
+        trainer = CustomPerpDiffTrainer(
             model=model,
             args=training_args,
             train_dataset=train_dataset if training_args.do_train else None,
