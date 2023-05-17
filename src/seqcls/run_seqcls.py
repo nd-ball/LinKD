@@ -564,7 +564,7 @@ def main():
             mname=model_args.model_name_or_path
         )
 
-    elif model_args.baseline=="fullloss":
+    elif model_args.baseline=="fullmodel":
         print("##### RUN loss + difflen + diffperp #####")
         trainer = CustomPerpDiffTrainer(
             model=model,
