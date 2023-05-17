@@ -4,7 +4,7 @@
 #$ -l gpu_card=2
 #$ -pe smp 1
 #$ -N LinkDblurbIEEE       # Specify job name
-#$ -t 1-6
+#$ -t 5-6
 
 module load cuda      # Required modules
 module load cudnn
@@ -13,14 +13,14 @@ source activate linkbert
 echo $SGE_TASK_ID
 
 
-export MODEL=BioLinkBERT-base
-export MODEL_PATH=michiyasunaga/$MODEL
+#export MODEL=BioLinkBERT-base
+#export MODEL_PATH=michiyasunaga/$MODEL
 #export MODEL=BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext
 #export MODEL_PATH=microsoft/$MODEL
 #export MODEL=bert-base-uncased
 #export MODEL_PATH=$MODEL
-#export MODEL=biobert-v1.1
-#export MODEL_PATH=dmis-lab/$MODEL
+export MODEL=biobert-v1.1
+export MODEL_PATH=dmis-lab/$MODEL
 
 
 ############################### QA: PubMedQA ###############################
